@@ -51,6 +51,8 @@ def get_result(case_num,prefix,verbose):
 	c = pycurl.Curl()
 	c.setopt(c.URL, url)
 	c.setopt(c.POSTFIELDS, 'appReceiptNum=%s'%case_num)
+	c.setopt(c.PROXY, '13.92.196.150')
+	c.setopt(c.PROXYPORT, 8080)
 	c.setopt(c.WRITEFUNCTION, buf.write)
 	c.setopt(c.CAINFO, certifi.where())
 	c.perform()
@@ -70,13 +72,13 @@ def get_result(case_num,prefix,verbose):
 		info[case_num] = {}
 		info[case_num]['Type'] = case_type
 		info[case_num]['Status'] = result[1]
-		info[case_num]['Received'] = recv_date
+		info[case_num]['Update'] = recv_date
 
 		if verbose:
 			print info
 
 	except Exception as e:
-		print 'USCIS format is incorrect'
+		print 'Case Not Valid'
 
 	return info
 
@@ -122,7 +124,6 @@ def get_case_type(line):
 
 def get_case_receive_date(details):
 	year = str(details[1][1:])
-
 	if year.isdigit():
 		recv_date = details[0][3:] + ' ' + details[1][1:]
 	else:
